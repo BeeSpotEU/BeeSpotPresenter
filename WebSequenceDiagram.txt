@@ -7,8 +7,8 @@ actor Deelnemer
 
 group Nieuwe sessie
 Presentator->Server: Start nieuwe sessie
-Server->Beamer: Toon pincode
-Beamer->Beamer: Toont pincode
+Server->Beamer: Toon pincode + url
+Beamer->Beamer: Toont pincode + url
 Deelnemer<-Beamer: Neemt pincode over
 end 
 
@@ -26,21 +26,24 @@ group Bijenstand toevoegen
 loop response != klaar
 
 Server->Deelnemer: Stuur formulier
-note left of Deelnemer: Bijenstandnaam\nKaartselectie
-group geocoder
-Deelnemer->Server: locatie omschrijving
+note left of Deelnemer: Bijenstandnaam\nLocatie\nAantal volken vorig jaar
+Deelnemer->Deelnemer:Invullen Bijenstandnaam
+group Locatie Zoeken
+alt adresveld
+Deelnemer->Server: adres 
 Server->Deelnemer: coordinaten
+else sleep op map
+Deelnemer->Server: coordinaten vanaf kaart
 end
-Deelnemer->Server: Verstuur formulier
 Server->Presentator: Stuur aantal Bijenstanden
-Presentator->Presentator: Toon aantal deelnemern\nToon aantal bijenstanden
+Presentator->Presentator: Toon aantal deelnemers\nToon aantal bijenstanden
 Server->Beamer: Nieuwe bijenstand locatie
 Beamer->Beamer: Toon aantal deelnemers\nToon aantal bijenstanden\nToon pincode\nToon kaart met bijenstanden
 end
 
 end
 
-group Dracht verwachting
+group Dracht verwachting per bijenstand (van een specifieke deelnemer)
 
 Presentator->Server: Start Drachtverwachting
 
@@ -49,12 +52,12 @@ Server->Beamer: Drachtverwachting slide
 loop per bijenstand
 
 Server->Deelnemer: Stuur formulier
-note left of Deelnemer: Dracht hoeveelheid\nDiversiteit
+note left of Deelnemer: Dracht hoeveelheid\n(Diversiteit)
 
 Deelnemer->Server: Verstuur formulier
 
 Server->Beamer: Stuur Drachtverwachting
-Beamer->Beamer: Toon aantal bijenstanden\nToon dubbele barchat
+Beamer->Beamer: Toon aantal bijenstanden\nToon barchat Drachtverwachting
 
 end
 
@@ -63,9 +66,9 @@ end
 group Uitleg basisdata
 Presentator->Server: Start Uitleg basisdata
 
-Server->Presentator: Open kaart met perselen
-Server->Beamer: Open kaart met perselen
-Server->Deelnemer: Open kaart met perselen
+Server->Presentator: Open kaart met percelen
+Server->Beamer: Open kaart met percelen
+Server->Deelnemer: Open kaart met percelen
 Presentator->Server: Klik blok aan
 Server->Beamer: Zoom kaart op blok
 Server->Beamer: Open view met planttypen en drachtplanten tabel
@@ -79,7 +82,7 @@ end
 
 group Vraag stellen, Opmerking maken
 Deelnemer->Server: Vraag
-note left of Deelnemer: Contex, tekst, locatie
+note left of Deelnemer: Context, tekst, locatie
 Server->Presentator: Vragen view
 end
 
@@ -96,7 +99,7 @@ Presentator->Server: Start Opbrengst
 Server->Beamer: Opbrengstenkaart slide
 loop per bijenstand
 Server->Deelnemer: Stuur formulier
-note left of Deelnemer: Honing uit bijenstal gehaald\nsuiker gevoerd
+note left of Deelnemer: Honing uit bijenstal gehaald (totaal vorig jaar)\nsuiker gevoerd (totaal vorig jaar)
 Deelnemer->Server: Verstuur formulier
 Server->Presentator: Aantal opgestuurd
 Server->Beamer: Toon op kaart
