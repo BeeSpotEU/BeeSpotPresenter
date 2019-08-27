@@ -1,0 +1,123 @@
+title Beespot presentatie ondersteuning
+
+participant Server
+actor Presentator
+participant Beamer
+actor Deelnemer
+
+group Nieuwe sessie
+Presentator->Server: Start nieuwe sessie
+Server->Beamer: Toon pincode
+Beamer->Beamer: Toont pincode
+Deelnemer<-Beamer: Neemt pincode over
+end 
+
+group Deelnemer toevoegen
+Deelnemer->Server: Start in sessie
+Server->Deelnemer: Stuur formulier
+note left of Deelnemer: Naam\n(postcode, huisnummer)
+Deelnemer->Server: Verstuur formulier
+Server->Presentator: Stuur aantal deelnemers
+Server->Beamer: Stuur aantal deelnemers
+Beamer->Beamer: Toon aantal deelnemers\nToon pincode
+end
+
+group Bijenstand toevoegen
+loop response != klaar
+
+Server->Deelnemer: Stuur formulier
+note left of Deelnemer: Bijenstandnaam\nKaartselectie
+group geocoder
+Deelnemer->Server: locatie omschrijving
+Server->Deelnemer: coordinaten
+end
+Deelnemer->Server: Verstuur formulier
+Server->Presentator: Stuur aantal Bijenstanden
+Presentator->Presentator: Toon aantal deelnemern\nToon aantal bijenstanden
+Server->Beamer: Nieuwe bijenstand locatie
+Beamer->Beamer: Toon aantal deelnemers\nToon aantal bijenstanden\nToon pincode\nToon kaart met bijenstanden
+end
+
+end
+
+group Dracht verwachting
+
+Presentator->Server: Start Drachtverwachting
+
+Server->Beamer: Drachtverwachting slide
+
+loop per bijenstand
+
+Server->Deelnemer: Stuur formulier
+note left of Deelnemer: Dracht hoeveelheid\nDiversiteit
+
+Deelnemer->Server: Verstuur formulier
+
+Server->Beamer: Stuur Drachtverwachting
+Beamer->Beamer: Toon aantal bijenstanden\nToon dubbele barchat
+
+end
+
+end
+
+group Uitleg basisdata
+Presentator->Server: Start Uitleg basisdata
+
+Server->Presentator: Open kaart met perselen
+Server->Beamer: Open kaart met perselen
+Server->Deelnemer: Open kaart met perselen
+Presentator->Server: Klik blok aan
+Server->Beamer: Zoom kaart op blok
+Server->Beamer: Open view met planttypen en drachtplanten tabel
+Server->Deelnemer: Open view met planttypen en drachtplanten tabel
+Presentator->Server: Toon voedselindex kaart
+Server->Presentator: Open voedsel indexkaart
+Server->Beamer: Open voedsel indexkaart
+Server->Deelnemer: Open voedsel indexkaart (zoom-in op eigen bijen stand)
+Deelnemer->Deelnemer: Exploreren
+end
+
+group Vraag stellen, Opmerking maken
+Deelnemer->Server: Vraag
+note left of Deelnemer: Contex, tekst, locatie
+Server->Presentator: Vragen view
+end
+
+group Verschil met ingevuld
+Presentator->Server: Start Verschillenkaart
+
+Server->Presentator: Open hotspots
+Server->Beamer: Open hotspots
+Server->Deelnemer: Zoom drachtverwachting, toon verschillen in tabel
+end
+
+group Opbrengst per bijenstand
+Presentator->Server: Start Opbrengst
+Server->Beamer: Opbrengstenkaart slide
+loop per bijenstand
+Server->Deelnemer: Stuur formulier
+note left of Deelnemer: Honing uit bijenstal gehaald\nsuiker gevoerd
+Deelnemer->Server: Verstuur formulier
+Server->Presentator: Aantal opgestuurd
+Server->Beamer: Toon op kaart
+end
+end
+
+group Kansenkaart
+Presentator->Server: Toon kansenkaart
+Server->Beamer: Kansenkaart
+Server->Deelnemer: Dracht- en opbrengsten lagen 
+Presentator->Server: Leeg maken
+group uit balans
+Server->Deelnemer: Kaart leeg
+Deelnemer->Server: Uit balans
+Server->Beamer: Heatmap
+end
+Presentator->Server: leegmaken
+group kansen voor stal
+Server->Deelnemer: Kaart leeg
+Deelnemer->Server: Kansen
+Server->Beamer: Heatmap
+end
+
+end
