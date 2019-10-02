@@ -1,125 +1,120 @@
 title BeespotPresenter
 
 participant Server
-actor Presentator
+actor Presenter
 participant Beamer
-actor Deelnemer
+actor Participant
 
-group Nieuwe sessie
-Presentator->Server: Start nieuwe sessie
-Server->Beamer: Toon url\nToon pincode
-
-Deelnemer<-Beamer: Neemt url & pincode over
+group New session
+Presenter->Server: Start new session
+Server->Beamer: Show url\nShow pincode
+Participant<-Beamer: Copy url & pin code
 end 
 
-group Deelnemer toevoegen
-Deelnemer->Server: Start in sessie
-Server->Deelnemer: Stuur formulier
-note left of Deelnemer: Naam\n(postcode, huisnummer)
-Deelnemer->Server: Verstuur formulier
-Server->Presentator: Stuur aantal deelnemers
-Server->Beamer: Stuur aantal deelnemers
-Beamer->Beamer: Toon aantal deelnemers\nToon url & pincode
+group Add Participant
+Participant->Server: Start in session
+Server->Participant: Send form
+note left of Participant: Name\n(postal code, house number)
+Participant->Server: Send form
+Server->Presenter: Send number of Participants
+Server->Beamer: Send number of Participants
+Beamer->Beamer: Show number of Participants\nShow url & pin code
 end
 
-group Bijenstand toevoegen
-loop response != klaar
+group Add apiary
+loop response != ready
+Server->Participant: Send form
+note left of Participant: Apiary name\nlocation\nnumber of colonies last year
+Participant->Participant:Enter Apiary name
 
-Server->Deelnemer: Stuur formulier
-note left of Deelnemer: Bijenstandnaam\nLocatie\nAantal volken vorig jaar
-Deelnemer->Deelnemer:Invullen Bijenstandnaam
-group Locatie Zoeken
-alt adresveld
-Deelnemer->Server: adres 
-Server->Deelnemer: coordinaten
-else sleep op map
-Deelnemer->Server: coordinaten vanaf kaart
-end
-Server->Presentator: Stuur aantal Bijenstanden
-Presentator->Presentator: Toon aantal deelnemers\nToon aantal bijenstanden
-Server->Beamer: Nieuwe bijenstand locatie
-Beamer->Beamer: Toon aantal deelnemers\nToon aantal bijenstanden\nToon url & pincode\nToon kaart met bijenstanden\nToon vliegradius (optioneel gradient met \noptellingvan kleuren bij overlapping)
+group location search
+alt address field
+Participant->Server: address 
+Server->Participant: coordinates
+else drop on map
+Participant->Server: coordinates from map
 end
 
+Server->Presenter: Send number of apiaries
+Presenter->Presenter: Show number of Participants\nShow number of apiaries
+Server->Beamer: New apiary location
+Beamer->Beamer: Show number of Participants\nShow number of apiaries\nShow url & pincode\nShow map met apiaries\nShow flight radius (optional: gradient met \nadd up overlapping colours)
 end
 
-group Dracht verwachting per bijenstand (van een specifieke deelnemer)
-
-Presentator->Server: Start Drachtverwachting
-
-Server->Beamer: Drachtverwachting slide
-
-loop per bijenstand
-
-Server->Deelnemer: Stuur formulier
-note left of Deelnemer: Dracht hoeveelheid\n(Diversiteit)
-
-Deelnemer->Server: Verstuur formulier
-
-Server->Beamer: Stuur Drachtverwachting
-Beamer->Beamer: Toon aantal bijenstanden\nToon barchat Drachtverwachting
-
+end
+group Floral resource availability per apiary (of a specific participant)
+Presenter->Server: Start Floral resource availability
+Server->Beamer: Floral resource availability slide
+loop per apiary
+Server->Participant: Send form
+note left of Participant: Floral resource availability\n(Diversity)
+Participant->Server: Send form
+Server->Beamer: Send Floral resource availability
+Beamer->Beamer: Show number of apiaries\nShow barchat Floral resource availability
 end
 
 end
 
-group Uitleg basisdata
-Presentator->Server: Start Uitleg basisdata
-
-Server->Presentator: Open kaart met percelen
-Server->Beamer: Open kaart met percelen
-Server->Deelnemer: Open kaart met percelen
-Presentator->Server: Klik blok aan
-Server->Beamer: Zoom kaart op blok
-Server->Beamer: Open view met planttypen en drachtplanten tabel
-Server->Deelnemer: Open view met planttypen en drachtplanten tabel
-Presentator->Server: Toon voedselindex kaart
-Server->Presentator: Open voedsel indexkaart
-Server->Beamer: Open voedsel indexkaart
-Server->Deelnemer: Open voedsel indexkaart (zoom-in op eigen bijen stand)
-Deelnemer->Deelnemer: Exploreren
+group Explanation of map
+presenter->Server: Start Explanation of map
+Server->Presenter: Open map with plots
+Server->Beamer: Open map with plots
+Server->Participant: Open map with plots
+presenter->Server: Click block on
+Server->Beamer: Zoom map on block
+Server->Beamer: Open view with plant types and forage sources table
+Server->Participant: Open view with plant types and forage sources table
+presenter->Server: Show food index map
+Server->presenter: Open food index map
+Server->Beamer: Open food index map
+Server->Participant: Open food index map (zoom in on own apiary)
+Participant->Participant: Explore
 end
 
-group Vraag stellen, Opmerking maken
-Deelnemer->Server: Vraag
-note left of Deelnemer: Context, tekst, locatie
-Server->Presentator: Vragen view
+group Ask question, make remarks
+Participant->Server: Question
+note left of Participant: Context, text, location
+Server->Presenter: Question view
 end
 
-group Verschil met ingevuld
-Presentator->Server: Start Verschillenkaart
-
-Server->Presentator: Open hotspots
+group Food balance 
+presenter->Server: Start Food balance map
+Server->presenter: Open hotspots
 Server->Beamer: Open hotspots
-Server->Deelnemer: Zoom drachtverwachting, toon verschillen in tabel
+Server->Participant: Zoom food resources, Show balance between supply and demand by honeybee colonies in table
 end
 
-group Opbrengst per bijenstand
-Presentator->Server: Start Opbrengst
-Server->Beamer: Opbrengstenkaart slide
-loop per bijenstand
-Server->Deelnemer: Stuur formulier
-note left of Deelnemer: Honing uit bijenstal gehaald (totaal vorig jaar)\nsuiker gevoerd (totaal vorig jaar)
-Deelnemer->Server: Verstuur formulier
-Server->Presentator: Aantal opgestuurd
-Server->Beamer: Toon op kaart
-end
+
+group Yield per apiary
+presenter->Server: Start Yield
+Server->Beamer: Yield map slide
+loop per apiary
+Server->Participant: Send form
+note left of Participant: Honey yield from apiary (total last year)\nsugar fed (total last year)
+Participant->Server: Send form
+Server->presenter: number of forms sent
+Server->Beamer: Show on map
 end
 
-group Kansenkaart
-Presentator->Server: Toon kansenkaart
-Server->Beamer: Kansenkaart
-Server->Deelnemer: Dracht- en opbrengsten lagen 
-Presentator->Server: Leeg maken
-group uit balans
-Server->Deelnemer: Kaart leeg
-Deelnemer->Server: Uit balans
+end
+
+group Opportunity map
+presenter->Server: Show Opportunity map
+Server->Beamer: Opportunity map
+Server->Participant: Floral resources- en yield layers 
+presenter->Server: Empty screen
+
+group Out of balance
+Server->Participant: Empty map
+Participant->Server: Out of balance
 Server->Beamer: Heatmap
 end
-Presentator->Server: leegmaken
-group kansen voor stal
-Server->Deelnemer: Kaart leeg
-Deelnemer->Server: Kansen
+
+presenter->Server: Empty screen
+
+group Opportunity for apiaries
+Server->Participant: Empty map
+Participant->Server: Opportunity for apiaries
 Server->Beamer: Heatmap
 end
 
